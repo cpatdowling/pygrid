@@ -15,7 +15,7 @@ class gridlabObject:
         "module powerflow {\n", "\tsolver_method " + solver_method + ";\n", "}\n\n", 
         "module tape;\n", "#set profiler=1;\n", "#set relax_naming_rules=1;\n\n"]
         else: 
-            headerfile = open(header_file, 'rb')
+            headerfile = open(self.workingDir + "/" + header_file, 'rb')
             header = headerfile.readlines()
         self.outFile.write("".join(header) + "\n")
     
@@ -95,7 +95,7 @@ class gridlabObject:
         
     def read_glm_file(self, filename):
         objBuffer = {}
-        with open(filename, 'rb') as inFile:
+        with open(self.workingDir + "/" + filename, 'rb') as inFile:
             currentObjType = ""
             currentObj = ""
             for line in inFile:
