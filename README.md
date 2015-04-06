@@ -1,10 +1,13 @@
 # pygrid
 A Python class for representing GridLab-D objects with a JSON flavor.
 
-Requirements: \n
-    Python 2.7.6, 3.1+ \n
-    Tested and Developed in linux, Ubuntu 14.4 -- path strings not yet configured for Windows but everything else should work \n
-    GridLab-D (hopefully you've got this one) \n
+Requirements:
+
+--Python 2.7.6, 3.1+
+
+--Tested and Developed in Linux, Ubuntu 14.4+ -- path strings not yet configured for Windows but everything else should work
+
+--GridLab-D (hopefully you've got this one)
 
 **Disclaimer** Work in progress by a bunch of research scientists.
 
