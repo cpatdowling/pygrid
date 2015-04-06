@@ -1,14 +1,14 @@
 # pygrid
 A Python class for representing GridLab-D objects with a JSON flavor.
 
-Requirements: 
-    Python 2.7.6, 3.1+
-    Tested and Developed in linux, Ubuntu 14.4 -- path strings not yet configured for Windows but everything else should work
-    GridLab-D (hopefully you've got this one)
+Requirements: \n
+    Python 2.7.6, 3.1+ \n
+    Tested and Developed in linux, Ubuntu 14.4 -- path strings not yet configured for Windows but everything else should work \n
+    GridLab-D (hopefully you've got this one) \n
 
 **Disclaimer** Work in progress by a bunch of research scientists.
 
-pygrid is a Python class for representing GridLab-D objects in JSON fashion. Having no authority, this developer does not pass judgement on GridLab-D engineer's choice of what jbjects did and did not require configuration objects, so all objects in GridLab-D are treated equally. In general, an instance of the pygrid class generates a master JSON object (stored as a dictionary) of the following form:
+pygrid is a Python class for representing GridLab-D objects in JSON fashion. Having no authority, this developer does not pass judgement on GridLab-D engineer's choice of what objects did and did not require configuration objects, so all objects in GridLab-D are treated equally. In general, an instance of the pygrid class generates a master JSON object (stored as a dictionary) of the following form:
 
     {object_type:
         {object_name:
