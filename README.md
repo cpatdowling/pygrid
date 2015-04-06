@@ -38,4 +38,9 @@ Navigate to the pygrid directory and from command line:
 This will write the GLM file for the 123 node GLM data stored in IEEE_123_TestFeeder. Additionally, one can call pickle_123_glm.py and this will generated a serialized dictionary, 123IEEE_glm_obj.pck which can be loaded directly into memory.
 
 These scripts should serve as a temporary example for class usage until it can be replaced with something more complete.
+
+In the pygrid directory, once having generating the serialized glm file using 123IEEE_glm_object.pck, one can try calling:
+    $python percentload.py 0.85
+    
+This will generate a similarly named GLM file at 85% nominal load as specified in the IEEE 123 Node Test Feeder documentation.
     
