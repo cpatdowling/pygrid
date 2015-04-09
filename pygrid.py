@@ -9,13 +9,13 @@ class gridlabObject:
             self.workingDir = os.getcwd()
         else:
             self.workingDir = workingDirectory
-        self.outFile = open(self.workingDir + "/" + filename, 'wb')
+        self.outFile = open(self.workingDir + "/" + filename, 'w')
         if header_file == "":
             header = ["clock {\n", "\ttimestamp \'2000-01-01 0:00:00';\n", "\ttimezone EST+5EDT;\n", "}\n\n",
         "module powerflow {\n", "\tsolver_method " + solver_method + ";\n", "}\n\n", 
         "module tape;\n", "#set profiler=1;\n", "#set relax_naming_rules=1;\n\n"]
         else: 
-            headerfile = open(self.workingDir + "/" + header_file, 'rb')
+            headerfile = open(self.workingDir + "/" + header_file, 'r')
             header = headerfile.readlines()
         self.outFile.write("".join(header) + "\n")
     
@@ -67,8 +67,11 @@ class gridlabObject:
         return(return_obj)
     
     def object_string(self, object_dict, objType):
-        return_string =  "object " + objType + " {\n"
-        return_string = return_string + "\tname " + object_dict["name"] + ";\n"
+        if ":" in object_dict["name"]:
+            return_string =  "object " + objType + ":" + object_dict["name"].split(":")[1] +  " {\n"
+        else:
+            return_string =  "object " + objType + " {\n"
+            return_string = return_string + "\tname " + object_dict["name"] + ";\n"
         for key in object_dict.keys():
             if key == "name" or key == "object":
                 pass
@@ -83,6 +86,7 @@ class gridlabObject:
         return(return_string)
         
     def check_header(self, line):
+        #unused function?
         current = line.strip()[0:4]
         if current == "Over" or current == "Line" or current == "Unde" or current == "Spot":
             return(current)
@@ -95,28 +99,36 @@ class gridlabObject:
         
     def read_glm_file(self, filename):
         objBuffer = {}
-        with open(self.workingDir + "/" + filename, 'rb') as inFile:
+        with open(self.workingDir + "/" + filename, 'r') as inFile:
             currentObjType = ""
             currentObj = ""
             for line in inFile:
                 if line.strip()[0:6] == "object":
-                    currentObjType = self.get_glm_object_type(line)
+                    currentObjType, nickname = self.get_glm_object_type(line)
                     if currentObjType not in objBuffer.keys():
                         objBuffer[currentObjType] = {}
                 elif line.strip()[0:1] == "}":
-                    pass
+                    currentObjType = ""
+                    currentObj = ""
                 elif line.strip()[0:4] == "name":
                     objAttrb = self.get_glm_object_attrbs(line.strip())
                     currentObj = objAttrb[1]
                     objBuffer[currentObjType][currentObj] = {objAttrb[0]: objAttrb[1]}
-                elif line.strip() == "":
+                elif line.strip() == "" or line.strip()[0:2] == '//':
                     pass
                 else:
+                    #catch un-named objects
+                    if currentObj == "":
+                        currentObj = ":".join([currentObjType, nickname])
+                        objBuffer[currentObjType][currentObj] = {"name": currentObj}
+                    #add attribute
                     objAttrb = self.get_glm_object_attrbs(line.strip())
                     objBuffer[currentObjType][currentObj][objAttrb[0]] = objAttrb[1]
         return(objBuffer)
         
     def get_glm_object_attrbs(self, strin):
+        if '//' in strin:
+            strin = strin.split('//')[0]
         tokens = strin.strip().split(" ")
         attrb = tokens[0]
         if len(tokens) > 2:
@@ -128,8 +140,12 @@ class gridlabObject:
     
     def get_glm_object_type(self, strin):
         tokens = strin.strip().split(" ")
-        objType = tokens[1]
-        return(objType)
+        if ":" in tokens[1]:
+            objType, nickname = tokens[1].split(":")
+        else:
+            objType = tokens[1]
+            nickname = ''
+        return(objType, nickname)
         
     def convert_load(self, loadType, power, voltage):
         outval = 0.0
@@ -142,7 +158,7 @@ class gridlabObject:
                 outval = float(power * 1000)
             return(outval)
         except:
-            print("zero value exception in load coversion")
+            print("zero value exception in load conversion")
             return(0.0)
 
     def get_phases_from_vals_node(self, phasedata, loadType, nominal):
