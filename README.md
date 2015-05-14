@@ -12,7 +12,7 @@ Requirements:
 
 **Disclaimer** Work in progress by a bunch of research scientists.
 
-pygrid is a Python class for representing GridLab-D objects in JSON fashion. Having no authority, this developer does not pass judgement on GridLab-D engineer's choice of what objects did and did not require configuration objects, so all objects in GridLab-D are treated equally. In general, an instance of the pygrid class generates a master JSON object (stored as a dictionary) of the following form:
+pygrid is a Python class for representing GridLab-D objects in JSON fashion. Since there is no clear distinction between which physical grid objects do and do require associated configuration objects, all objects in pygrid are treated equally as in Gridlab. In general, an instance of the pygrid class generates a master JSON object (stored as a dictionary) of the following form:
 
     {object_type:
         {object_name:
@@ -32,7 +32,7 @@ pygrid is a Python class for representing GridLab-D objects in JSON fashion. Hav
     
 Ideal implementations sort object names for a given object type such that quick editing of attribute values can be performed (and not solely, for example, change all capacitor attributes to value X, but rather, capacitors of name Y or possessing attributes Z)
 
-Currently, many features are hardcoded. Continued development may produce generation functions for each object type, better general reading of GLM files into memory, compatibility for GLM write objects (not currently included) and sorting of master JSON key values when writing GLM files
+Currently, many features are hardcoded. Continued development may produce generation functions for each object type, better general reading of GLM files into memory, compatibility for GLM write objects (not currently included) and sorting of master JSON key values when writing GLM files, compatability for machine learning techniques, and web rendering.
 
 Example:
 
