@@ -4,20 +4,22 @@ import os
 class gridlabObject:
     def __init__(self, filename="default.glm", workingDirectory="", solver_method = "NR", header_file = ""):
         self.objects = {}
-        self.reference = {}
+        self.reference = {}         #This appears to be unused
         if workingDirectory == "":
             self.workingDir = os.getcwd()
         else:
             self.workingDir = workingDirectory
-        self.outFile = open(self.workingDir + "/" + filename, 'w')
+        self.outFileName = os.path.join(self.workingDir, filename)
         if header_file == "":
             header = ["clock {\n", "\ttimestamp \'2000-01-01 0:00:00';\n", "\ttimezone EST+5EDT;\n", "}\n\n",
         "module powerflow {\n", "\tsolver_method " + solver_method + ";\n", "}\n\n", 
         "module tape;\n", "#set profiler=1;\n", "#set relax_naming_rules=1;\n\n"]
         else: 
-            headerfile = open(self.workingDir + "/" + header_file, 'r')
-            header = headerfile.readlines()
-        self.outFile.write("".join(header) + "\n")
+            headerFileName = os.path.join(self.workingDir, header_file)
+            with open(headerFileName, 'r') as headerFile:
+                header = headerFile.readlines()
+        with open(self.outFileName, 'w') as outFile:
+            outFile.write("".join(header) + "\n")
     
     def create_conductor(self, itemname, gmr, resistance):
         return_obj = {"object": "overhead_line_conductor", "name": itemname, "geometric_mean_radius": gmr, "resistance": resistance}
@@ -99,22 +101,23 @@ class gridlabObject:
         
     def read_glm_file(self, filename):
         objBuffer = {}
-        with open(self.workingDir + "/" + filename, 'r') as inFile:
+        FileToOpen = os.path.join(self.workingDir, filename)
+        with open(FileToOpen, 'r') as inFile:
             currentObjType = ""
             currentObj = ""
             for line in inFile:
-                if line.strip()[0:6] == "object":
+                if line.strip().startswith("object"):
                     currentObjType, nickname = self.get_glm_object_type(line)
                     if currentObjType not in objBuffer.keys():
                         objBuffer[currentObjType] = {}
-                elif line.strip()[0:1] == "}":
+                elif line.strip().startswith("}"):
                     currentObjType = ""
                     currentObj = ""
-                elif line.strip()[0:4] == "name":
+                elif line.strip().startswith("name"):
                     objAttrb = self.get_glm_object_attrbs(line.strip())
                     currentObj = objAttrb[1]
                     objBuffer[currentObjType][currentObj] = {objAttrb[0]: objAttrb[1]}
-                elif line.strip() == "" or line.strip()[0:2] == '//':
+                elif line.strip() == "" or line.strip().startswith('//'):
                     pass
                 else:
                     #catch un-named objects
@@ -128,7 +131,7 @@ class gridlabObject:
         
     def get_glm_object_attrbs(self, strin):
         if '//' in strin:
-            strin = strin.split('//')[0]
+            strin = strin.split('//')[0]    #strip comments
         tokens = strin.strip().split(" ")
         attrb = tokens[0]
         if len(tokens) > 2:

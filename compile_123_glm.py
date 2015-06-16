@@ -3,10 +3,10 @@ from pygrid import *
 
 if __name__ == '__main__':
     path = os.getcwd()
-    gl = gridlabObject(filename="123IEEE_python.glm", workingDirectory=path, header_file="IEEE_123_TestFeeder/123nodeglmheader.txt")
+    gl = gridlabObject(filename="123IEEE_python.glm", workingDirectory=path, header_file=os.path.join("IEEE_123_TestFeeder", "123nodeglmheader.txt"))
     hardFiles = ['123nodeglmconductors.txt', '123nodeglmlinespacing.txt', '123nodeglmlineconfig.txt', '123nodeglmlines.txt', '123nodeglmloads.txt', '123nodeglmnodes.txt', '123nodeglmtransformer.txt', '123nodeglmcapacitors.txt', '123nodeglmregulators.txt']
     for filename in hardFiles:
-        filename = "/IEEE_123_TestFeeder/" + filename
+        filename = os.path.join("IEEE_123_TestFeeder", filename)
         newObjs = gl.read_glm_file(filename)
         print(filename)
         for objType in newObjs.keys():
@@ -22,5 +22,5 @@ if __name__ == '__main__':
             if obj == "node610":
                 gl.objects[typeObj][obj]["nominal_voltage"] = "277.1"
             outline = gl.object_string(gl.objects[typeObj][obj], typeObj)
-            gl.outFile.write(outline + "\n")
-    gl.outFile.close()
+            with open(gl.outFileName, 'a') as outFile:
+                outFile.write(outline + "\n")
